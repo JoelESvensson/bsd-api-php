@@ -2,6 +2,7 @@
 
 namespace Blue\Tools\Api;
 
+use Blue\Tools\Api\DeferredException;
 use GuzzleHttp;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
@@ -126,8 +127,11 @@ class Client
      *
      * @return ResponseInterface
      */
-    public function get($apiPath, $queryParams = [])
-    {
+    public function get(
+        $apiPath,
+        $queryParams = [],
+        $autoresolveDeferred = true
+    ) {
         $response = $this->guzzleClient->get(
             $this->baseUrl.$apiPath,
             [
@@ -136,7 +140,7 @@ class Client
             ]
         );
 
-        return $this->resolve($response);
+        return $this->resolve($response, $autoresolveDeferred);
     }
 
     /**
@@ -148,8 +152,12 @@ class Client
      *
      * @return ResponseInterface
      */
-    public function post($apiPath, $queryParams = [], $data = '')
-    {
+    public function post(
+        $apiPath,
+        $queryParams = [],
+        $data = '',
+        $autoresolveDeferred = true
+    ) {
         $response = $this->guzzleClient->post(
             $this->baseUrl.$apiPath,
             [
@@ -159,7 +167,7 @@ class Client
             ]
         );
 
-        return $this->resolve($response);
+        return $this->resolve($response, $autoresolveDeferred);
     }
 
     /**
@@ -167,13 +175,16 @@ class Client
      *
      * @return FutureResponse|Response|ResponseInterface|\GuzzleHttp\Ring\Future\FutureInterface|null
      */
-    private function resolve(ResponseInterface $response)
+    private function resolve(ResponseInterface $response, $autoresolveDeferred = true)
     {
 
         // An HTTP status of 202 indicates that this request was deferred
         if ($response->getStatusCode() == 202) {
-            $key = $response->getBody()->getContents();
+            if (!$autoresolveDeferred) {
+                throw new DeferredException($response);
+            }
 
+            $key = (string)$response->getBody();
             $attempts = $this->deferredResultMaxAttempts;
 
             while ($attempts > 0) {
