@@ -2,8 +2,7 @@
 
 namespace Blue\Tools\Api;
 
-use Blue\Tools\Api\DeferredException;
-use GuzzleHttp;
+
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Message\FutureResponse;
@@ -184,7 +183,7 @@ class Client
                 throw new DeferredException($response);
             }
 
-            $key = (string)$response->getBody();
+            $key = (string) $response->getBody();
             $attempts = $this->deferredResultMaxAttempts;
 
             while ($attempts > 0) {
@@ -236,6 +235,7 @@ class Client
             .$path."\n"
             .$queryString;
         $mac = hash_hmac('sha1', $signingString, $this->secret);
+
         return $mac;
     }
 
@@ -272,8 +272,10 @@ class Client
     }
 
     /**
-     * Returns the specified request option or all options if none specified
+     * Returns the specified request option or all options if none specified.
+     *
      * @param null $keyOrPath
+     *
      * @return array|mixed|null
      */
     public function getRequestOption($keyOrPath = null)
@@ -282,14 +284,17 @@ class Client
     }
 
     /**
-     * Sets a request option for future requests
+     * Sets a request option for future requests.
+     *
      * @param $keyOrPath
      * @param $value
+     *
      * @return $this
      */
     public function setRequestOption($keyOrPath, $value)
     {
         $this->guzzleClient->setDefaultOption($keyOrPath, $value);
+
         return $this;
     }
 }
