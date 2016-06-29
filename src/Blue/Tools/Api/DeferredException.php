@@ -7,7 +7,6 @@ use Psr\Http\Message\ResponseInterface;
 
 class DeferredException extends Exception
 {
-
     /**
      * @var ResponseInterface
      */
@@ -26,6 +25,6 @@ class DeferredException extends Exception
 
     public function getDeferredId()
     {
-        return (string)$this->response->getBody();
+        return (string) $this->response->getBody();
     }
 }
