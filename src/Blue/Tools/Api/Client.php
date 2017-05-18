@@ -157,13 +157,20 @@ class Client
         $data = '',
         $autoresolveDeferred = true
     ) {
+        $options = [
+            'query'  => $queryParams,
+            'body'   => $data,
+            'future' => false,
+        ];
+        if (is_array($body)) {
+           $options['form_params'] = $data;   
+        } else {
+           $options['body'] = $data;
+        }
+        
         $response = $this->guzzleClient->post(
             $this->baseUrl.$apiPath,
-            [
-                'query'  => $queryParams,
-                'body'   => $data,
-                'future' => false,
-            ]
+            $options,  
         );
 
         return $this->resolve($response, $autoresolveDeferred);
