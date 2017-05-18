@@ -170,7 +170,7 @@ class Client
         
         $response = $this->guzzleClient->post(
             $this->baseUrl.$apiPath,
-            $options,  
+            $options
         );
 
         return $this->resolve($response, $autoresolveDeferred);
