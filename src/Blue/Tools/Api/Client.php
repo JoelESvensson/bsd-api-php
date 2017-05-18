@@ -159,10 +159,9 @@ class Client
     ) {
         $options = [
             'query'  => $queryParams,
-            'body'   => $data,
             'future' => false,
         ];
-        if (is_array($body)) {
+        if (is_array($data)) {
            $options['form_params'] = $data;   
         } else {
            $options['body'] = $data;
